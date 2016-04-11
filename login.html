@@ -42,7 +42,7 @@
     var claimDevice = function(button, deviceID) {
         particle.claimDevice({ deviceId: deviceID, auth: accessToken }).then(function(data) {
             console.log('device claim data:', data);
-            toastr.info('Successfully claimed device');
+            toastr.success('Successfully claimed device');
             $(button).hide();
         }, function(err) {
             console.log('device claim err:', err);
