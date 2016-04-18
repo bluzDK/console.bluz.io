@@ -122,7 +122,9 @@
                 console.log('API call completed on promise fail: ', err);
             }
         );
-
+        $.getJSON( "http://console.bluz.io/firmware/latest/version.json", function( data ) {
+                  console.log("Newest Firmware Is: " + data.version);
+         });
     }
 
 </script>
