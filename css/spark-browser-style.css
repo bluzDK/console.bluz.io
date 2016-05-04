@@ -140,6 +140,25 @@ ul {
   font-size: 14px;
 }
 
+#update-form-button {
+    width: 248px;
+    margin: 20px auto;
+    background: #73dc69;
+    font-size: 14px;
+}
+
+.update-button {
+    width: 150px;
+    border-radius: 0;
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 12px;
+    background: #73dc69;
+    border: 0;
+    font-size: 11px;
+}
+
 #claim-form-button {
     width: 248px;
     margin: 20px auto;

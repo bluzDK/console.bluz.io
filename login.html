@@ -11,123 +11,42 @@
     <script type="text/javascript" src="js/particle.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/toastr.min.js"></script>
+    <script src="js/bluz-update.js"></script>
+    <script src="js/app.js"></script>
 </head>
 
 <body>
-<div class="waitScreen"></div>
 
 <script>
-
-    var accessToken, myDevices;
-    var particle = new Particle();
-
-    var waiting = function(waiting) {
-        if (waiting) {
-            $("body").addClass("loading");
-        } else {
-            $("body").removeClass("loading");
-        }
-    }
-
-    var isGatewayClaimed = function(deviceID) {
-        var found = false;
-        myDevices.forEach(function(device) {
-            if (device.id===deviceID) {
-                found = true;
-            }
+    $(document).ready(function () {
+        $.getJSON("/firmware/latest/version.json", function (data) {
+            console.log("Newest Firmware Is: " + data.version);
+            latestFirmware = data.version;
         });
-        return found;
-    }
-
-    var claimDevice = function(button, deviceID) {
-        particle.claimDevice({ deviceId: deviceID, auth: accessToken }).then(function(data) {
-            console.log('device claim data:', data);
-            toastr.success('Successfully claimed device');
-            $(button).hide();
-        }, function(err) {
-            console.log('device claim err:', err);
-            toastr.error('Unable to claim device: ' + err.errorDescription);
-        });
-    }
-
-    var parseDeviceAttributesForGateways = function(device, data) {
-        if (data.body.variables != null && data.body.variables.hasOwnProperty('gatewayID')) {
-            particle.getVariable({ deviceId: device.id, name: 'gatewayID', auth: accessToken }).then(function(data) {
-                console.log('Device variable retrieved successfully:', data);
-                var deviceID = data.body.result.substring(0, 24);
-                if (!isGatewayClaimed(deviceID)) {
-                    $('#gateway-list tr:last').after('<tr><td align="center"><img src="img/gw_combined.png" class="img-responsive" width="300"/><p>' + deviceID + '</p><button class="claim-button" onclick="claimDevice(this, \'' + deviceID + '\')">Claim</button></td></tr>');
-                } else {
-                    $('#gateway-list tr:last').after('<tr><td align="center"><img src="img/gw_combined.png" class="img-responsive" width="300"/><p>' + deviceID + '</p></td></tr>');
-                }
-
-            }, function(err) {
-                console.log('An error occurred while getting attrs:', err);
-            });
-        }
-    }
-
-    var parseDevicesForGateways = function(devices) {
-        var deviceCounter = 0;
-        devices.body.forEach(function(device) {
-            var devicesPr = particle.getDevice({ deviceId: device.id, auth: accessToken });
-
-            devicesPr.then(
-                    function(data){
-                        console.log('Device attrs retrieved successfully:', data);
-                        parseDeviceAttributesForGateways(device, data);
-                        deviceCounter++;
-                        if (deviceCounter == devices.body.length) { waiting(false); }
-                    },
-                    function(err) {
-                        console.log('API call failed: ', err);
-                        deviceCounter++;
-                        if (deviceCounter == devices.body.length) { waiting(false); }
-                    }
-            );
-        });
-    }
-
-    var listDevices = function() {
-        var devicesPr = particle.listDevices({ auth: accessToken });
-
-        devicesPr.then(
-            function(devices){
-                console.log('Devices: ', devices);
-                myDevices = devices.body;
-                parseDevicesForGateways(devices);
-            },
-            function(err) {
-                console.log('List devices call failed: ', err);
-            }
-        );
-    }
-
-    var loginClicked = function() {
-        $('#spark-login-form-error').hide();
-
-        var user = $('#spark-login-form-email').val();
-        var pass = $('#spark-login-form-password').val();
-
-        particle.login({username: user, password:  pass}).then(
-            function(data){
-                console.log('API call completed on promise resolve: ', data.body.access_token);
-                accessToken = data.body.access_token;
-                $('.spark-login-modal').hide();
-                waiting(true);
-                listDevices();
-            },
-            function(err) {
-                $('#spark-login-form-error').show();
-                console.log('API call completed on promise fail: ', err);
-            }
-        );
-        $.getJSON( "http://console.bluz.io/firmware/latest/version.json", function( data ) {
-                  console.log("Newest Firmware Is: " + data.version);
-         });
-    }
-
+    });
 </script>
+
+<div class="waitScreen"></div>
+
+<!-- Modal -->
+<div id="update-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Updating Firmware</h4>
+            </div>
+            <div class="modal-body">
+                <p>This will update the firmware of your gateway shield. Multiple files may be downloaded and the device may reboot. The process may take several minutes, please do not power off or reboot the device.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="page-inner">
