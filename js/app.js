@@ -31,11 +31,19 @@ var claimDevice = function(button, deviceID) {
     });
 }
 
-var updateDevice = function(button, deviceID) {
-
-    $("#update-modal").modal()
-    bluzUpdate.update(deviceID, accessToken, ['http://console.bluz.io/firmware/latest/system-part1.bin', 'http://console.bluz.io/firmware/latest/tinker.bin']);
-    toastr.success('Update Started');
+var updateDevice = function(row, button, deviceID) {
+    $(row).fadeTo(1000, 0.4);
+    $("#update-modal").modal();
+    bluzUpdate.update(deviceID, accessToken, ['http://console.bluz.io/firmware/latest/system-part1.bin', 'http://console.bluz.io/firmware/latest/tinker.bin'], function(success) {
+        if (success) {
+            toastr.success('Update Completed Successfully');
+        } else {
+            toastr.error('Error updating. Please try again.');
+            $(button).show();
+        }
+        $(row).fadeTo(1000, 1);
+    });
+    toastr.info('Update Started');
     $(button).hide();
 }
 
@@ -49,7 +57,7 @@ var parseDeviceAttributesForGateways = function(device, data) {
             var html = '<tr><td align="center">';
             if (data.body.coreInfo.product_id == 0) {
                 //Core
-                html = html.concat('<img src="img/gw_photon.png" class="img-responsive" width="300"/>');
+                html = html.concat('<img src="img/gw_core.png" class="img-responsive" width="300"/>');
             } else if (data.body.coreInfo.product_id == 6) {
                 //Photon
                 html = html.concat('<img src="img/gw_photon.png" class="img-responsive" width="300"/>');
@@ -77,7 +85,7 @@ var parseDeviceAttributesForGateways = function(device, data) {
                             particle.getVariable({ deviceId: deviceID, name: 'version', auth: accessToken }).then(function(data) {
                                 var deviceVersion = data.body.result;
                                 if (deviceVersion != latestFirmware) {
-                                    html = html.concat('<button class="update-button" onclick="updateDevice(this, \'' + deviceID + '\')">Update</button>');
+                                    html = html.concat('<button class="update-button" onclick="updateDevice(this.parentElement.parentElement, this, \'' + deviceID + '\')">Update</button>');
                                 }
                                 html = html.concat('</td></tr>');
                                 //now append the html

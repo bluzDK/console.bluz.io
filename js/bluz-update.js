@@ -1,5 +1,7 @@
 var bluzUpdate = function () {
-    this.update = function(device, accessToken, files) {
+    var lastFlashSuccessful;
+
+    this.update = function(device, accessToken, files, callback) {
         var fileIndex = 0;
 
         var source = new EventSource("https://api.particle.io/v1/devices/" + device + "/events?access_token=" + accessToken);
@@ -10,7 +12,7 @@ var bluzUpdate = function () {
         }
         source.addEventListener('spark/status', function(e){
             var obj = jQuery.parseJSON(e.data);
-            if (obj.data == "online" && fileIndex < files.length) {
+            if (obj.data == "online" && fileIndex < files.length && this.lastFlashSuccessful) {
                 $.ajax({
                     type: "POST",
                     url: "https://update.bluz.io/update/",
@@ -19,8 +21,21 @@ var bluzUpdate = function () {
                     success: function(response) { console.log("subsequent file sent"); },
                     error: function(xhr, ajaxOptions, thrownError) { console.log(xhr.responseText); }
                 });
+                this.lastFlashSuccessful = false;
             } else if (obj.data == "online" && fileIndex == files.length) {
                 source.close();
+                callback(true);
+            }
+
+        }, false);
+
+        source.addEventListener('spark/flash/status', function(e){
+            var obj = jQuery.parseJSON(e.data);
+            if (obj.data.trim() == "failed") {
+                source.close();
+                callback(false);
+            } else if (obj.data.trim() == "success") {
+                this.lastFlashSuccessful = true;
             }
 
         }, false);
@@ -33,6 +48,7 @@ var bluzUpdate = function () {
             success: function(response) { console.log("first file sent"); },
             error: function(xhr, ajaxOptions, thrownError) { console.log(xhr.responseText); }
         });
+        this.lastFlashSuccessful = false;
 
     }
 
