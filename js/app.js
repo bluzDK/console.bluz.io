@@ -34,7 +34,7 @@ var claimDevice = function(button, deviceID) {
 var updateDevice = function(row, button, deviceID) {
     $(row).fadeTo(1000, 0.4);
     $("#update-modal").modal();
-    bluzUpdate.update(deviceID, accessToken, ['http://console.bluz.io/firmware/latest/system-part1.bin', 'http://console.bluz.io/firmware/latest/tinker.bin'], function(success) {
+    bluzUpdate.update(deviceID, accessToken, ['http://staging-console.bluz.io/firmware/latest/system-part1.bin', 'http://staging-console.bluz.io/firmware/latest/tinker.bin'], function(success) {
         if (success) {
             toastr.success('Update Completed Successfully');
         } else {
@@ -149,21 +149,24 @@ var parseDeviceAttributesForGateways = function(device, data) {
 var parseDevicesForGateways = function(devices) {
     var deviceCounter = 0;
     devices.body.forEach(function(device) {
-        var devicesPr = particle.getDevice({ deviceId: device.id, auth: accessToken });
+        if (device.connected) {
+            var devicesPr = particle.getDevice({ deviceId: device.id, auth: accessToken });
 
-        devicesPr.then(
-            function(data){
-                console.log('Device attrs retrieved successfully:', data);
-                parseDeviceAttributesForGateways(device, data);
-                deviceCounter++;
-                if (deviceCounter == devices.body.length) { waiting(false); }
-            },
-            function(err) {
-                console.log('API call failed: ', err);
-                deviceCounter++;
-                if (deviceCounter == devices.body.length) { waiting(false); }
-            }
-        );
+            devicesPr.then(
+                function(data){
+                    console.log('Device attrs retrieved successfully:', data);
+                    parseDeviceAttributesForGateways(device, data);
+                    deviceCounter++;
+                    if (deviceCounter == devices.body.length) { waiting(false); }
+                },
+                function(err) {
+                    console.log('API call failed: ', err);
+                    deviceCounter++;
+                    if (deviceCounter == devices.body.length) { waiting(false); }
+                }
+            );
+        }
+        else {deviceCounter++;}
     });
 }
 
