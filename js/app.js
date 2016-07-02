@@ -181,8 +181,21 @@ var listDevices = function() {
         },
         function(err) {
             console.log('List devices call failed: ', err);
+            waiting(false);
+            $('.spark-login-modal').show();
+            $('#spark-login-form-error').show();
+            $('#gateway-list tr:last').html();
+            localStorage.removeItem("accessToken");
         }
     );
+}
+
+var loggedIn = function() {
+    $('.spark-login-modal').hide();
+    $('#gateway-list tr:last').before('<h2>Gateways</h2>');
+    // $('#non-gateway-list tr:last').before('<h2>Non-Gateways</h2>');
+    waiting(true);
+    listDevices();
 }
 
 var loginClicked = function() {
@@ -196,13 +209,11 @@ var loginClicked = function() {
         function(data){
             console.log('API call completed on promise resolve: ', data.body.access_token);
             accessToken = data.body.access_token;
-            $('.spark-login-modal').hide();
-            $('#gateway-list tr:last').before('<h2>Gateways</h2>');
-            // $('#non-gateway-list tr:last').before('<h2>Non-Gateways</h2>');
-            waiting(true);
-            listDevices();
+            localStorage.setItem("accessToken", accessToken);
+            loggedIn();
         },
         function(err) {
+            waiting(false);
             $('#spark-login-form-error').show();
             console.log('API call completed on promise fail: ', err);
         }
@@ -214,6 +225,16 @@ var loginClicked = function() {
 }
 
 $(document).ready(function() {
+    // try and use local storage if possible
+    if (typeof(Storage) !== "undefined") {
+        // Code for localStorage/sessionStorage.
+        storedAccessToken = localStorage.getItem("accessToken");
+        if (storedAccessToken != null) {
+            accessToken = storedAccessToken;
+            loggedIn();
+        }
+    }
+
     $('#login-form').keypress(function (e) {
 
         if (e.which == 13) // enter key
