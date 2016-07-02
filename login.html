@@ -48,13 +48,32 @@
     </div>
 </div>
 
+<div id="gateway-update-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Loading Gateway App</h4>
+            </div>
+            <div class="modal-body">
+                <p>This will update the app on your Particle Device to the latest bluz Gateway App. Multiple files may be downloaded and the device may reboot. The process may take several minutes, please do not power off or reboot the device or close your browser window.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="page-inner">
         <div class="row">
             <div class="col-lg-4"></div>
             <div class="col-lg-4">
                 <h2 class="center-text">Welcome to the bluz console</h2>
-                <form class="spark-login-modal">
+                <form class="spark-login-modal" id="login-form">
                     <div id="spark-login-form-error" class="spark-login-error">
                         <p>Error logging in</p>
                     </div>
@@ -68,6 +87,12 @@
                         <tbody><tr></tr></tbody>
                     </table>
                 </div>
+
+                <!--<div class="center-text">-->
+                    <!--<table id="non-gateway-list" align="center">-->
+                        <!--<tbody><tr></tr></tbody>-->
+                    <!--</table>-->
+                <!--</div>-->
             </div>
         </div>
     </div>

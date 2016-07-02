@@ -178,6 +178,18 @@ ul {
     font-size: 11px;
 }
 
+.gateway-app-button {
+    width: 150px;
+    border-radius: 0;
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 12px;
+    background: rgb(94, 157, 200);
+    border: 0;
+    font-size: 11px;
+}
+
 .row-border {
     outline: thin solid black;
 }

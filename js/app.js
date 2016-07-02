@@ -47,6 +47,24 @@ var updateDevice = function(row, button, deviceID) {
     $(button).hide();
 }
 
+var gatewayAppDevice = function(row, button, deviceID) {
+    $(row).fadeTo(1000, 0.4);
+    $("#gateway-update-modal").modal();
+    bluzUpdate.update(deviceID, accessToken, ['https://raw.githubusercontent.com/bluzDK/particle-gateway-shield-code/master/particle-gateway-code/particle-gateway-code.ino'], function(success) {
+        if (success) {
+            toastr.success('Loaded Gateway App Successfully');
+            waiting(true);
+            listDevices();
+        } else {
+            toastr.error('Error loading gateway app. Please try again.');
+            $(button).show();
+        }
+        $(row).fadeTo(1000, 1);
+    });
+    toastr.info('Update Started');
+    $(button).hide();
+}
+
 var parseDeviceAttributesForGateways = function(device, data) {
     if (data.body.variables != null && data.body.variables.hasOwnProperty('gatewayID')) {
         particle.getVariable({ deviceId: device.id, name: 'gatewayID', auth: accessToken }).then(function(data) {
@@ -93,7 +111,7 @@ var parseDeviceAttributesForGateways = function(device, data) {
                             });
                         } else {
                             //legacy. the first firmware didn't have this variable
-                            html = html.concat('<button class="update-button" onclick="updateDevice(this, \'' + deviceID + '\')">Update</button>');
+                            html = html.concat('<button class="update-button" onclick="updateDevice(this.parentElement.parentElement, this, \'' + deviceID + '\')">Update</button>');
                             html = html.concat('</td></tr>');
                             //now append the html
                             $('#gateway-list tr:last').after(html);
@@ -107,6 +125,24 @@ var parseDeviceAttributesForGateways = function(device, data) {
         }, function(err) {
             console.log('An error occurred while getting attrs:', err);
         });
+    } else if (device.connected == true && (device.product_id == 0 || device.product_id == 6 || device.product_id == 10)) {
+        var html = '<tr><td align="center">';
+        if (device.product_id == 0) {
+            //Core
+            html = html.concat('<img src="img/core.png" height="80"/>');
+        } else if (device.product_id == 6) {
+            //Photon
+            html = html.concat('<img src="img/photon.png" height="80"/>');
+        } else if (device.product_id == 10) {
+            //Electron
+            html = html.concat('<img src="img/electron.png" height="80"/>');
+        }
+        html = html.concat('<p>' + device.id + '</p><p>' + device.name + '</p>');
+
+        html = html.concat('<button class="gateway-app-button" onclick="gatewayAppDevice(this.parentElement.parentElement, this, \'' + device.id + '\')">Load Gateway App</button>');
+        html = html.concat('</td></tr>');
+        //now append the html
+        // $('#non-gateway-list tr:last').after(html);
     }
 }
 
@@ -147,6 +183,7 @@ var listDevices = function() {
 }
 
 var loginClicked = function() {
+
     $('#spark-login-form-error').hide();
 
     var user = $('#spark-login-form-email').val();
@@ -157,6 +194,8 @@ var loginClicked = function() {
             console.log('API call completed on promise resolve: ', data.body.access_token);
             accessToken = data.body.access_token;
             $('.spark-login-modal').hide();
+            $('#gateway-list tr:last').before('<h2>Gateways</h2>');
+            // $('#non-gateway-list tr:last').before('<h2>Non-Gateways</h2>');
             waiting(true);
             listDevices();
         },
@@ -170,3 +209,11 @@ var loginClicked = function() {
         latestFirmware = data.version;
     });
 }
+
+$(document).ready(function() {
+    $('#login-form').keypress(function (e) {
+
+        if (e.which == 13) // enter key
+            loginClicked();
+    }.bind(this));
+});
