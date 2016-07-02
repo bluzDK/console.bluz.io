@@ -18,7 +18,7 @@ var bluzUpdate = function () {
                     url: "https://update.bluz.io/update/",
                     data: JSON.stringify({"device":device, "accessToken":accessToken,"files":[files[fileIndex++]]}),
                     contentType: "application/json; charset=utf-8",
-                    success: function(response) { console.log("subsequent file sent"); },
+                    success: function(response) { console.log("sent file: " + files[fileIndex-1]); },
                     error: function(xhr, ajaxOptions, thrownError) { console.log(xhr.responseText); }
                 });
                 this.lastFlashSuccessful = false;
@@ -45,7 +45,7 @@ var bluzUpdate = function () {
             url: "https://update.bluz.io/update/",
             data: JSON.stringify({"device":device, "accessToken":accessToken,"files":[files[fileIndex++]]}),
             contentType: "application/json; charset=utf-8",
-            success: function(response) { console.log("first file sent"); },
+            success: function(response) { console.log("sent file: " + files[fileIndex-1]); },
             error: function(xhr, ajaxOptions, thrownError) { console.log(xhr.responseText); }
         });
         this.lastFlashSuccessful = false;
