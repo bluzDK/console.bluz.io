@@ -234,7 +234,7 @@ $(document).ready(function() {
             loggedIn();
         }
     }
-
+    
     $('#login-form').keypress(function (e) {
 
         if (e.which == 13) // enter key
