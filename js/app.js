@@ -12,7 +12,7 @@ var waiting = function(waiting) {
 
 var isGatewayClaimed = function(deviceID) {
     if (deviceID == "No gateway detected yet.") {
-        return false;
+        return true;
     }
     var found = false;
     myDevices.forEach(function(device) {
