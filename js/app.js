@@ -88,7 +88,7 @@ var parseDeviceAttributesForGateways = function(device, data) {
             }
             html = html.concat('<p>' + deviceID + '</p>');
 
-            if (!isGatewayClaimed(deviceID)) {
+            if (!isGatewayClaimed(deviceID) && deviceID != "No gateway detected yet.") {
                 html = html.concat('<button class="claim-button" onclick="claimDevice(this, \'' + deviceID + '\')">Claim</button>');
                 html = html.concat('</td></tr>');
                 //now append the html
