@@ -11,9 +11,6 @@ var waiting = function(waiting) {
 }
 
 var isGatewayClaimed = function(deviceID) {
-    if (deviceID == "No gateway detected yet.") {
-        return true;
-    }
     var found = false;
     myDevices.forEach(function(device) {
         if (device.id===deviceID) {
@@ -91,14 +88,14 @@ var parseDeviceAttributesForGateways = function(device, data) {
             }
             html = html.concat('<p>' + deviceID + '</p>');
 
-            if (!isGatewayClaimed(deviceID)) {
+            if (deviceID == "No gateway detected yet.") {
+                html = html.concat('<p><i>Please try again</i></p>');
+            } else if (!isGatewayClaimed(deviceID)) {
                 html = html.concat('<button class="claim-button" onclick="claimDevice(this, \'' + deviceID + '\')">Claim</button>');
                 html = html.concat('</td></tr>');
                 //now append the html
                 $('#gateway-list tr:last').after(html);
             } else {
-                var version = "1.0.47";
-
                 particle.getDevice({ deviceId: deviceID, auth: accessToken }).then(
                     function(data){
                         console.log('Device attrs retrieved successfully:', data);
