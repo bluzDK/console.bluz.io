@@ -11,6 +11,9 @@ var waiting = function(waiting) {
 }
 
 var isGatewayClaimed = function(deviceID) {
+    if (deviceID == "No gateway detected yet.") {
+        return false;
+    }
     var found = false;
     myDevices.forEach(function(device) {
         if (device.id===deviceID) {
@@ -88,7 +91,7 @@ var parseDeviceAttributesForGateways = function(device, data) {
             }
             html = html.concat('<p>' + deviceID + '</p>');
 
-            if (!isGatewayClaimed(deviceID) && deviceID != "No gateway detected yet.") {
+            if (!isGatewayClaimed(deviceID)) {
                 html = html.concat('<button class="claim-button" onclick="claimDevice(this, \'' + deviceID + '\')">Claim</button>');
                 html = html.concat('</td></tr>');
                 //now append the html
