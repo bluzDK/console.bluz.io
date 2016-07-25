@@ -93,6 +93,7 @@ var parseDeviceAttributesForGateways = function(device, data) {
             } else if (!isGatewayClaimed(deviceID)) {
                 html = html.concat('<button class="claim-button" onclick="claimDevice(this, \'' + deviceID + '\')">Claim</button>');
                 html = html.concat('</td></tr>');
+                $('#gateway-list tr:last').after(html);
                 //now append the html
             } else {
                 particle.getDevice({ deviceId: deviceID, auth: accessToken }).then(
