@@ -34,7 +34,7 @@ var claimDevice = function(button, deviceID) {
 var updateDevice = function(row, button, deviceID) {
     $(row).fadeTo(1000, 0.4);
     $("#update-modal").modal();
-    bluzUpdate.update(deviceID, accessToken, ['http://staging-console.bluz.io/firmware/bluz_gateway/latest/bluz_gateway.bin', 'http://staging-console.bluz.io/firmware/bluz_gateway/latest/system-part1.bin'], function(success) {
+    bluzUpdate.update(deviceID, accessToken, ['http://staging-console.bluz.io/firmware/latest/bluz_gateway/bluz_gateway.bin', 'http://staging-console.bluz.io/firmware/latest/bluz_gateway/system-part1.bin'], function(success) {
         if (success) {
             toastr.success('Update Completed Successfully');
         } else {
