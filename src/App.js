@@ -1,38 +1,48 @@
 import React, { Component } from 'react';
 import './App.css';
+import 'flexboxgrid';
+
+import AppFetcher from './fetch/AppFetcher'
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from'material-ui/styles/getMuiTheme';
+import AppBar from 'material-ui/AppBar';
 
-const muiTheme = getMuiTheme({
-    palette:{
-        primary1Color: '#2d6fa3',
-        primary2Color: '#69abdf',
-        accent1Color: '#f78f1e'
-
-    },
-});
-
-import Login from './Components/Login'
+import Login from './components/Login'
+import Dashboard from './components/Dashboard'
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <MuiThemeProvider muiTheme={muiTheme}>
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: "",
+            password: "",
+            tryAgain: false
+        };
+    }
+
+    render() {
+        return (
+          <div>
+            <AppBar
+              title="bluz console"
+              iconClassNameRight="muidocs-icon-navigation-expand-more"
+            />
+            {AppFetcher.fetchToken() === "" &&
             <Login
                 loggedIn={this.loggedIn}
-            />
-        </MuiThemeProvider>
-      </div>
-    );
-  }
+            />}
+            {AppFetcher.fetchToken() !== "" &&
+            <Dashboard
+              accessToken={AppFetcher.fetchToken()}
+            />}
+          </div>
+        );
+    }
 
     loggedIn = () => {
         console.log("Successfully Logged In")

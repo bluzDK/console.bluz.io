@@ -1,13 +1,13 @@
 
 //now define the store
 class AppFetcher {
-    static fetchToken(callback)
+    static fetchToken()
     {
         if (typeof(Storage) !== "undefined") {
             // Code for localStorage/sessionStorage.
             var key = localStorage.getItem("accessToken");
             if (key != null) {
-                callback(key);
+                return key;
             }
         }
     }
@@ -16,6 +16,13 @@ class AppFetcher {
     {
         if (typeof(Storage) !== "undefined") {
             localStorage.setItem("accessToken", token);
+        }
+    }
+
+    static deleteToken()
+    {
+        if (typeof(Storage) !== "undefined") {
+            localStorage.removeItem("accessToken");
         }
     }
 }

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import 'whatwg-fetch'
 
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 
-import AppFetcher from '../Fetchers/AppFetcher'
+import AppFetcher from '../fetch/AppFetcher'
 
 import Particle from 'particle-api-js';
 
