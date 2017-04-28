@@ -15,7 +15,7 @@ var bluzUpdate = function () {
             if (obj.data == "online" && fileIndex < files.length && this.lastFlashSuccessful) {
                 $.ajax({
                     type: "POST",
-                    url: "https://update.bluz.io/update",
+                    url: "https://api.bluz.io/update",
                     data: JSON.stringify({"device":device, "accessToken":accessToken,"files":[files[fileIndex++]]}),
                     contentType: "application/json; charset=utf-8",
                     success: function(response) { console.log("sent file: " + files[fileIndex-1]); },
@@ -42,7 +42,7 @@ var bluzUpdate = function () {
 
         $.ajax({
             type: "POST",
-            url: "https://update.bluz.io/update",
+            url: "https://api.bluz.io/update",
             data: JSON.stringify({"device":device, "accessToken":accessToken,"files":[files[fileIndex++]]}),
             contentType: "application/json; charset=utf-8",
             success: function(response) { console.log("sent file: " + files[fileIndex-1]); },
